@@ -10,15 +10,26 @@ public class Xwing : MonoBehaviour
     [SerializeField]
     private int turnSpeed;
 
+    [Header("Attack")]
+    [SerializeField]
+    private GameObject bulletPrefab;
+    [SerializeField]
+    private Transform[] posRotBullet;
+
+    AudioSource shootAudio;
+
     void Awake()
     {
-        
+        // bloqueamos el cursor dentro del juego y hace que desaparezca, con esc se sale
+        Cursor.lockState = CursorLockMode.Locked;
+        shootAudio = GetComponent<AudioSource>();
     }
 
     void Update()
     {
         Movement();
         Turning();
+        Attack();
     }
 
     // Para mover mi nave espacial en el eje X y Z
@@ -38,6 +49,19 @@ public class Xwing : MonoBehaviour
         float yMouse = Input.GetAxis("Mouse Y"); // Recoger el desplazamiento vertical del ratón
         Vector3 rotation = new Vector3(-yMouse, xMouse, 0);
         transform.Rotate(rotation.normalized * turnSpeed * Time.deltaTime); // se normaliza el vector para que se mueva a la misma velocidad en todas las direcciones 
+    }
+
+    // Crearemos las balas para atcar a las naves enemigas
+    void Attack()
+    {
+        if(Input.GetMouseButtonDown(0))
+        {
+            shootAudio.Play();
+            for(int i = 0; i < posRotBullet.Length; i++)
+            { 
+                Instantiate(bulletPrefab, posRotBullet[i].position, posRotBullet[i].rotation);
+            }
+        }
     }
 
 
